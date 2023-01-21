@@ -1,0 +1,124 @@
+
+
+-- This file was NOT obfuscated, but beware all this code is very sloppy and unorganized. Nothing in here is rare and most of it is public hense why its open source
+
+if not game:IsLoaded() then game.Loaded:Wait() end
+
+local Player = game.Players.LocalPlayer
+
+
+        if Player.DataFolder.Currency.Value >= 80000 then
+            
+            local vu = game:GetService("VirtualUser") -- AntiAfk
+                game:GetService("Players").LocalPlayer.Idled:connect(function()
+                vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+                wait(1)
+                vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+            end)
+            
+            
+            local function DeleteChar()
+                for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+                    if v:IsA('MeshPart') or v:IsA('Part') or v:IsA('Accessory') then
+                        v:Destroy()
+                    end
+                end
+                game.Players.LocalPlayer.Character.Name = 'Deleted'
+            end
+
+            
+            if not Player.Character then
+                Player.CharacterAdded:Wait()
+            end
+            
+            for i,v in pairs(game.Workspace.Ignored.Shop:GetChildren()) do
+                if not string.find(v.Name, 'Ammo') and not string.find(v.Name, 'Armor') and not string.find(v.Name, 'Phone') and not string.find(v.Name,'Bike') and not string.find(v.Name, 'Mask') and not string.find(v.Name, 'SG') and not string.find(v.Name,'Moveset') then
+                    local Name = string.gsub(string.split(v.Name, '-')[1], ' ', '')
+                    local Owned = false
+                    if not Player.Character:FindFirstChild(Name) and not Player.Backpack:FindFirstChild(Name) then
+                        repeat
+                            Player.Character.HumanoidRootPart.CFrame = v.Head.CFrame
+                            fireclickdetector(v:FindFirstChildOfClass('ClickDetector'))
+                            for i,W in pairs(Player.Backpack:GetChildren()) do
+                                if string.gsub(W.Name, ' ', '') == Name then
+                                    Owned = true
+                                end
+                            end
+                            task.wait()
+                        until Owned == true
+                    end
+                end
+            end
+            
+            local Count
+
+            
+            local Crew = tonumber(Player.DataFolder.Information.Crew.Value)
+            repeat
+                Player.Character.HumanoidRootPart.CFrame = CFrame.new(game:GetService("Workspace").Ignored.Shop["[Flowers] - $5"].Head.Position.X, game:GetService("Workspace").Ignored.Shop["[Flowers] - $5"].Head.Position.Y - 5, game:GetService("Workspace").Ignored.Shop["[Flowers] - $5"].Head.Position.Z)
+                fireclickdetector(game:GetService("Workspace").Ignored.Shop["[Flowers] - $5"].ClickDetector)
+                Count = 0 
+                for i,v in pairs(game:GetService("Workspace").Ignored.ItemsDrop:GetDescendants()) do
+                    local s,e = pcall(function()
+                        if v:IsA('Tool') then
+                            repeat 
+                                Player.Character.HumanoidRootPart.CFrame = CFrame.new(v.Parent.Position)  
+                                task.wait()
+                            until not v
+                        end
+                    end) if e then print(e) end
+                end
+                
+            
+            
+                if Crew then
+                    game:GetService("ReplicatedStorage").MainEvent:FireServer("JoinCrew",tostring(Crew))
+                    for i,v in pairs(Player.Backpack:GetChildren()) do
+                        if v:IsA('Tool') and v.Name == '[SprayCan]' then
+                            v.Parent = Player.Character
+                        end
+                    end
+                    game:GetService("ReplicatedStorage").MainEvent:FireServer("JoinCrew",tostring(Crew))
+                    task.wait()
+                    game:GetService("ReplicatedStorage").MainEvent:FireServer("LeaveCrew")
+                end
+                
+                for i,v in pairs(Player.Backpack:GetChildren()) do
+                    if v:IsA('Tool') then
+                        Count = Count + 1
+                    end
+                end
+                for i,v in pairs(Player.Character:GetChildren()) do
+                    if v:IsA('Tool') then
+                        Count = Count + 1
+                    end   
+                end
+                task.wait()
+                print('You have '.. tostring(Count) .. ' items, \n it will crash at 1550 items')
+            until Count >= 1550
+            
+            wait(1)
+            Player.Character.HumanoidRootPart.CFrame = CFrame.new(0,99999999,0)
+            wait(3)
+            
+            for i,v in pairs(Player.Backpack:GetChildren()) do
+                if v:IsA('Tool') then
+                    v.Parent = Player.Character
+                end
+            end
+                
+            local T = 0
+            repeat
+                for i,v in pairs(Player.Backpack:GetChildren()) do
+                    if v:IsA('Tool') then
+                        v.Parent = Player.Character
+                    end
+                end
+                T = T + 1
+            until T >= 35
+            
+            DeleteChar()
+            
+        else
+            announce('You need atleast 100k to use this', 'sry :(', 10)
+        end
